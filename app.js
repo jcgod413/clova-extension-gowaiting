@@ -5,7 +5,7 @@ const morgan = require('morgan');
 
 const routes = require('./routes');
 
-const PORT = process.env.HTTP_PORT || 80;
+const PORT = process.env.HTTP_PORT || 8080;
 
 const app = express();
 
