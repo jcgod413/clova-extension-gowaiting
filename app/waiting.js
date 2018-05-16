@@ -79,5 +79,5 @@ module.exports = {
     add,
     modify,
     remove,
-    getStoreWaiting,
+    getWaitingCount,
 };

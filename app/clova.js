@@ -53,7 +53,7 @@ class CEKRequest {
         console.dir('slots: ', slots);
         switch (intent) {
             case 'GetWaitingIntent':
-                let waitingCount = waiting.getStoreWaiting(slots.value);
+                let waitingCount = waiting.getWaitingCount(slots.value);
                 cekResponse.setSimpleSpeechText(`대기인원은 ${waitingCount}명 입니다.`)
                 break;
             case 'PostWaitingIntent':
