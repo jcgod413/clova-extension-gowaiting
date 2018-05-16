@@ -1,5 +1,6 @@
 const uuid = require('uuid').v4;
 const _ = require('lodash');
+const waiting = require('./waiting');
 
 class Directive {
     constructor({
@@ -37,7 +38,7 @@ class CEKRequest {
 
     launchRequest(cekResponse) {
         console.log('launchRequest')
-        cekResponse.setSimpleSpeechText('매장 대기상태 또는 매장에 대신 줄서줘 라고 해주세요.');
+        cekResponse.setSimpleSpeechText('매장 대기상태 또는 매장 대기표 뽑아줘 라고 해주세요.');
         // cekResponse.setMultiturn({
 
         // })
@@ -48,10 +49,12 @@ class CEKRequest {
         console.dir(this.request);
         const intent = this.request.intent.name;
         const slots = this.request.intent.slots;
-        console.dir(intent);
-        console.dir(slots);
+        console.dir('intent: ', intent);
+        console.dir('slots: ', slots);
         switch (intent) {
             case 'GetWaitingIntent':
+                let waitingCount = waiting.getStoreWaiting(slots.value);
+                cekResponse.setSimpleSpeechText(`대기인원은 ${waitingCount}명 입니다.`)
                 break;
             case 'PostWaitingIntent':
                 break;

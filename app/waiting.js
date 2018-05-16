@@ -61,10 +61,23 @@ const remove = (req, res) => {
     res.send(waitingList);
 };
 
+const getWaitingCount = (store) => {
+    let count = 0;
+    
+    waitingList.forEach((item, index, array) => {
+        if( store === item.store && item.status === 'waiting' )    {
+            count++;
+        }
+    });
+
+    return count;
+};
+
 module.exports = {
     get,  
     getAll,
     add,
     modify,
-    remove
+    remove,
+    getStoreWaiting,
 };
