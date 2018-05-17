@@ -1,6 +1,15 @@
 const uuid = require('uuid').v4;
 const _ = require('lodash');
 const waiting = require('./waiting');
+const {
+    RT_NOSTORE,
+    RT_GETWAITING_1,
+    RT_GETWAITING_2,
+    RT_POSTWAITING_1,
+    RT_POSTWAITING_2,
+    RT_GUIDE,
+    RT_END,
+} = require('../config');
 
 class Directive {
     constructor({
@@ -22,15 +31,15 @@ const manageWaiting = (store, action) => {
     let responseText = "";
 
     if (waitingCount == -1) {
-        responseText += "지원하지 않는 매장입니다.";
+        responseText += RESPONSE_NO_STORE;
     } else {
         switch (action) {
             case "GetWaiting":
-                responseText = "대기인원은 " + waitingCount + "명 입니다.";
+                responseText = RT_GETWAITING_1 + waitingCount + RT_GETWAITING_2;
                 break;
             case "PostWaiting":
                 waiting.postWaiting(store);
-                responseText = "대기 신청이 완료되었습니다. 총 대기인원은 " + (waitingCount + 1) + "명 입니다.";
+                responseText = RT_POSTWAITING_1 + (waitingCount + 1) + RT_POSTWAITING_2;
                 break;
         }
     }
@@ -59,7 +68,7 @@ class CEKRequest {
 
     launchRequest(cekResponse) {
         console.log('launchRequest')
-        cekResponse.setSimpleSpeechText("고대기에서 스타벅스 대기상태 알려줘 또는 스타벅스 대기표 뽑아줘 라고 시도해보세요.");
+        cekResponse.setSimpleSpeechText(RT_GUIDE);
         cekResponse.setMultiturn({
             intent: 'ManageWaitingIntent',
         });
@@ -70,13 +79,13 @@ class CEKRequest {
         const intent = this.request.intent.name;
         const slots = this.request.intent.slots;
         if (!slots || !slots.Store) {
-            cekResponse.setSimpleSpeechText("지원하지 않는 매장입니다. 다시 시도해주세요.");
+            cekResponse.setSimpleSpeechText(RT_NOSTORE);
             cekResponse.setMultiturn({
                 intent: 'ManageWaitingIntent',
             });
             return;
         } else if (!slots.Action) {
-            cekResponse.setSimpleSpeechText("고대기에서 스타벅스에 대기시켜줘 라고 시도해보세요.");
+            cekResponse.setSimpleSpeechText(RT_GUIDE);
             cekResponse.setMultiturn({
                 intent: 'ManageWaitingIntent',
             });
@@ -90,7 +99,7 @@ class CEKRequest {
                 break;
             case 'Clova.GuideIntent':
             default:
-                cekResponse.setSimpleSpeechText("고대기에서 매장 대기상태 알려줘 또는 매장 대기표 뽑아줘 라고 시도해보세요.");
+                cekResponse.setSimpleSpeechText(RT_GUIDE);
         }
 
         if (this.session.new == false) {
@@ -100,7 +109,7 @@ class CEKRequest {
 
     sessionEndedRequest(cekResponse) {
         console.log('sessionEndedRequest')
-        cekResponse.setSimpleSpeechText('고대기를 종료합니다.')
+        cekResponse.setSimpleSpeechText(RT_END)
         cekResponse.clearMultiturn()
     }
 }
