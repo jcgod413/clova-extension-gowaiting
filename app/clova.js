@@ -29,41 +29,45 @@ class Directive {
     }
 }
 
-const manageWaiting = (slots) => {
-    let action = slots.Action.value;
+const getWaiting = (slots) => {
     let responseText = "";
-
-    if( !slots || !slots.Store )	{
-	return RT_GUIDE;
-    }
-
-    let waitingCount = waiting.getWaitingCount(slots.Store.value);
-    if (waitingCount == -1) {
-        responseText += RESPONSE_NO_STORE;
+    if (!slots || !slots.Store) {
+        responseText = RT_GUIDE;
     } else {
-        switch (action) {
-            case "GetWaiting":
-                responseText = RT_GETWAITING_1 + waitingCount + RT_GETWAITING_2;
-                break;
-            case "PostWaiting":
-                waiting.postWaiting(slots.Store.value);
-                responseText = RT_POSTWAITING_1 + (waitingCount + 1) + RT_POSTWAITING_2;
-                break;
-            default:
-                responseText = RT_GUIDE;
+        let store = slots.Store.value;
+        let waitingCount = waiting.getWaitingCount(store);
+        if (waitingCount == -1) {
+            responseText += RESPONSE_NO_STORE;
+        } else {
+            responseText = RT_GETWAITING_1 + waitingCount + RT_GETWAITING_2;
         }
     }
 
     return responseText;
 }
 
+const postWaiting = (slots) => {
+    let responseText = "";
+    if (!slots || !slots.Store) {
+        responseText = RT_GUIDE;
+    } else {
+        let store = slots.Store.value;
+        waiting.postWaiting(store);
+
+        let waitingCount = waiting.getWaitingCount(store);
+        responseText = RT_GETWAITING_1 + waitingCount + RT_GETWAITING_2;
+    }
+
+    return responseText;
+}
+
 const getStores = () => {
-	let responseText = RT_GETSTORES_1;
-	STORES.forEach((item, index, array) => {
-		responseText += item + ", ";
-	});
-	responseText += RT_GETSTORES_2;
-	return responseText;
+    let responseText = RT_GETSTORES_1;
+    STORES.forEach((item, index, array) => {
+        responseText += item + ", ";
+    });
+    responseText += RT_GETSTORES_2;
+    return responseText;
 }
 
 class CEKRequest {
@@ -95,21 +99,23 @@ class CEKRequest {
         console.log('intentRequest');
         const intent = this.request.intent.name;
         const slots = this.request.intent.slots;
-	
-	let responseText;
+
+        let responseText;
         switch (intent) {
-            case 'ManageWaitingIntent':
-                responseText = manageWaiting(slots);
-                cekResponse.setSimpleSpeechText(responseText);
+            case 'GetWaitingIntent':
+                responseText = getWaiting(slots);
                 break;
-	    case 'GetStoresIntent':
-		responseText = getStores();
-		cekResponse.setSimpleSpeechText(responseText);
-		break;
+            case 'PostWaitingIntent':
+                responseText = postWaiting(slots);
+                break;
+            case 'GetStoresIntent':
+                responseText = getStores();
+                break;
             case 'Clova.GuideIntent':
             default:
-                cekResponse.setSimpleSpeechText(RT_GUIDE);
+                responseText = RT_GUIDE;
         }
+        cekResponse.setSimpleSpeechText(responseText);
 
         if (this.session.new == false) {
             cekResponse.setMultiturn();
