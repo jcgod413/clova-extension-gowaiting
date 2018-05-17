@@ -18,7 +18,7 @@ class Directive {
 }
 
 const manageWaiting = (store, action) => {
-    let waitingCount = waiting.getWaitingCount(slots.Store.value);
+    let waitingCount = waiting.getWaitingCount(store);
     let responseText = "";
 
     if (waitingCount == -1) {
@@ -29,7 +29,8 @@ const manageWaiting = (store, action) => {
                 responseText = "대기인원은 " + waitingCount + "명 입니다.";
                 break;
             case "PostWaiting":
-                responseText = "대기 신청이 완료되었습니다. 총 대기인원은 " + waitingCount + "명 입니다.";
+		waiting.postWaiting(store);
+                responseText = "대기 신청이 완료되었습니다. 총 대기인원은 " + (waitingCount+1) + "명 입니다.";
                 break;
         }
     }
@@ -67,8 +68,12 @@ class CEKRequest {
         console.log('intentRequest');
         const intent = this.request.intent.name;
         const slots = this.request.intent.slots;
-
-        switch (intent) {
+        if( !slots )    {
+            cekResponse.setSimpleSpeechText("지원하지 않는 매장입니다.");
+            return;
+        }
+            
+	switch (intent) {
             case 'ManageWaitingIntent':
                 let responseText = manageWaiting(slots.Store.value, slots.Action.value);
                 cekResponse.setSimpleSpeechText(responseText);
