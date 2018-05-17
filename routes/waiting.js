@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { waiting } = require('../app/');
+const {
+    waiting
+} = require('../app/');
 
 router.get('/', waiting.getAll);
 router.get('/:id', waiting.get);

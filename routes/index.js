@@ -7,7 +7,7 @@ router.use('/waiting', waiting);
 
 router.use('/clova', clova);
 
-router.use('/naver_login', (req, res) => {  
+router.use('/naver_login', (req, res) => {
     res.send(req.query);
 });
 

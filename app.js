@@ -5,14 +5,15 @@ const morgan = require('morgan');
 
 const routes = require('./routes');
 
-const PORT = process.env.HTTP_PORT || 80;
+const PORT = process.env.SERVER_PORT || 80;
 
 const app = express();
 
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 app.use(morgan('common'));
-// app.use((err, req, res, next) => next());
 
 app.use('/', routes);
 
@@ -24,5 +25,5 @@ app.use((req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Waiting Server is running on ${PORT} port ✅`);
+  console.log(`GoWaiting Server is running on ${PORT} port ✅`);
 });
