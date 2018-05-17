@@ -49,7 +49,7 @@ const manageWaiting = (slots) => {
             case "GetStores":
                 responseText = RT_GETSTORES_1;
                 STORES.forEach((item, index, array) => {
-                    responseText += item + " ";
+                    responseText += item + ", ";
                 });
                 responseText += RT_GETSTORES_2;
                 break;
