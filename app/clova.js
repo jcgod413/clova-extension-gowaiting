@@ -59,7 +59,7 @@ class CEKRequest {
 
     launchRequest(cekResponse) {
         console.log('launchRequest')
-        cekResponse.setSimpleSpeechText("고대기에서 매장 대기상태 알려줘 또는 매장 대기표 뽑아줘 라고 시도해보세요.");
+        cekResponse.setSimpleSpeechText("고대기에서 스타벅스 대기상태 알려줘 또는 스타벅스 대기표 뽑아줘 라고 시도해보세요.");
         cekResponse.setMultiturn({
             intent: 'ManageWaitingIntent',
         });
