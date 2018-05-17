@@ -38,12 +38,12 @@ const manageWaiting = (slots) => {
     } else {
         switch (action) {
             case "GetWaiting":
-                waitingCount = waiting.getWaitingCount(slots.Store.value);
+                var waitingCount = waiting.getWaitingCount(slots.Store.value);
                 responseText = RT_GETWAITING_1 + waitingCount + RT_GETWAITING_2;
                 break;
             case "PostWaiting":
                 waiting.postWaiting(store);
-                waitingCount = waiting.getWaitingCount(slots.Store.value);
+                var waitingCount = waiting.getWaitingCount(slots.Store.value);
                 responseText = RT_POSTWAITING_1 + (waitingCount + 1) + RT_POSTWAITING_2;
                 break;
             case "GetStores":
