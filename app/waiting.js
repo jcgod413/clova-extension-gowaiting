@@ -90,12 +90,19 @@ const getWaitingCount = (store) => {
     return count;
 };
 
-const postWaiting = (store) => {
+const postWaiting = (store, userId) => {
     var newDate = new Date();
     var time = newDate.toFormat('YYYY-MM-DD HH24:MI:SS');
 
+    waitingList.forEach((item, index, array) => {
+        if (item.userId === userId && item.status === 'waiting') {
+            return -1;
+        }
+    });
+
     waitingList.push({
         id: id++,
+        userId,
         store,
         status: 'waiting',
         time
