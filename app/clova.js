@@ -17,6 +17,25 @@ class Directive {
     }
 }
 
+const manageWaiting = (store, action) => {
+    let waitingCount = waiting.getWaitingCount(slots.Store.value);
+    let responseText = "";
+
+    if (waitingCount == -1) {
+        responseText += "지원하지 않는 상점입니다.";
+    } else {
+        switch (action) {
+            case "GetWaiting":
+                responseText = "대기인원은 " + waitingCount + "명 입니다.";
+                break;
+            case "PostWaiting":
+                responseText = "대기 신청이 완료되었습니다. 총 대기인원은 " + waitingCount + "명 입니다.";
+                break;
+        }
+    }
+    return responseText;
+}
+
 class CEKRequest {
     constructor(httpReq) {
         this.request = httpReq.body.request;
@@ -38,29 +57,25 @@ class CEKRequest {
 
     launchRequest(cekResponse) {
         console.log('launchRequest')
-        cekResponse.setSimpleSpeechText('매장 대기상태 또는 매장 대기표 뽑아줘 라고 해주세요.');
-        // cekResponse.setMultiturn({
-
-        // })
+        cekResponse.setSimpleSpeechText("고대기에서 매장 대기상태 알려줘 또는 매장 대기표 뽑아줘 라고 시도해보세요.");
+        cekResponse.setMultiturn({
+            intent: 'ManageWaitingIntent',
+        });
     }
 
     intentRequest(cekResponse) {
         console.log('intentRequest');
-        console.log(this.request);
         const intent = this.request.intent.name;
         const slots = this.request.intent.slots;
-        console.log('intent: ', intent);
-        console.log('slots: ', slots);
+
         switch (intent) {
-            case 'GetWaitingIntent':
-                let waitingCount = waiting.getWaitingCount(slots.LOCATION.value);
-                cekResponse.setSimpleSpeechText(`대기인원은 ${waitingCount}명 입니다.`)
-                break;
-            case 'PostWaitingIntent':
+            case 'ManageWaitingIntent':
+                let responseText = manageWaiting(slots.Store.value, slots.Action.value);
+                cekResponse.setSimpleSpeechText(responseText);
                 break;
             case 'Clova.GuideIntent':
             default:
-                cekResponse.setSimpleSpeechText("매장 대기상태 알려줘, 라고 시도해보세요.");
+                cekResponse.setSimpleSpeechText("고대기에서 매장 대기상태 알려줘 또는 매장 대기표 뽑아줘 라고 시도해보세요.");
         }
 
         if (this.session.new == false) {
@@ -70,7 +85,7 @@ class CEKRequest {
 
     sessionEndedRequest(cekResponse) {
         console.log('sessionEndedRequest')
-        cekResponse.setSimpleSpeechText('주사위 놀이 익스텐션을 종료합니다.')
+        cekResponse.setSimpleSpeechText('고대기를 종료합니다.')
         cekResponse.clearMultiturn()
     }
 }
