@@ -61,7 +61,7 @@ const postWaiting = (slots) => {
         waiting.postWaiting(store);
 
         let waitingCount = waiting.getWaitingCount(store);
-        responseText = RT_GETWAITING_1 + waitingCount + RT_GETWAITING_2;
+        responseText = RT_POSTWAITING_1 + waitingCount + RT_POSTWAITING_2;
     }
 
     return responseText;
