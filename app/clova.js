@@ -32,26 +32,22 @@ class Directive {
 const manageWaiting = (slots) => {
     let action = slots.Action.value;
     let responseText = "";
-    
+
+    if( !slots || !slots.Store )	{
+	return RT_GUIDE;
+    }
+
+    let waitingCount = waiting.getWaitingCount(slots.Store.value);
     if (waitingCount == -1) {
         responseText += RESPONSE_NO_STORE;
     } else {
         switch (action) {
             case "GetWaiting":
-                var waitingCount = waiting.getWaitingCount(slots.Store.value);
                 responseText = RT_GETWAITING_1 + waitingCount + RT_GETWAITING_2;
                 break;
             case "PostWaiting":
-                waiting.postWaiting(store);
-                var waitingCount = waiting.getWaitingCount(slots.Store.value);
+                waiting.postWaiting(slots.Store.value);
                 responseText = RT_POSTWAITING_1 + (waitingCount + 1) + RT_POSTWAITING_2;
-                break;
-            case "GetStores":
-                responseText = RT_GETSTORES_1;
-                STORES.forEach((item, index, array) => {
-                    responseText += item + ", ";
-                });
-                responseText += RT_GETSTORES_2;
                 break;
             default:
                 responseText = RT_GUIDE;
@@ -59,6 +55,15 @@ const manageWaiting = (slots) => {
     }
 
     return responseText;
+}
+
+const getStores = () => {
+	let responseText = RT_GETSTORES_1;
+	STORES.forEach((item, index, array) => {
+		responseText += item + ", ";
+	});
+	responseText += RT_GETSTORES_2;
+	return responseText;
 }
 
 class CEKRequest {
@@ -83,28 +88,24 @@ class CEKRequest {
     launchRequest(cekResponse) {
         console.log('launchRequest')
         cekResponse.setSimpleSpeechText(RT_GUIDE);
-        cekResponse.setMultiturn({
-            intent: 'ManageWaitingIntent',
-        });
+        cekResponse.setMultiturn();
     }
 
     intentRequest(cekResponse) {
         console.log('intentRequest');
         const intent = this.request.intent.name;
         const slots = this.request.intent.slots;
-        if (!slots || (!slots.Store && !slots.Action)) {
-            cekResponse.setSimpleSpeechText(RT_GUIDE);
-            cekResponse.setMultiturn({
-                intent: 'ManageWaitingIntent',
-            });
-            return;
-        }
-
+	
+	let responseText;
         switch (intent) {
             case 'ManageWaitingIntent':
-                let responseText = manageWaiting(slots);
+                responseText = manageWaiting(slots);
                 cekResponse.setSimpleSpeechText(responseText);
                 break;
+	    case 'GetStoresIntent':
+		responseText = getStores();
+		cekResponse.setSimpleSpeechText(responseText);
+		break;
             case 'Clova.GuideIntent':
             default:
                 cekResponse.setSimpleSpeechText(RT_GUIDE);
