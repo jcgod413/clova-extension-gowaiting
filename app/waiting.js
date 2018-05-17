@@ -96,17 +96,17 @@ const postWaiting = (store, userId) => {
     var duplicated = false;
 
     waitingList.forEach((item, index, array) => {
-	console.log(item.userId, userId, item.status);
-        console.log(item.userId == userId, item.status=='waiting');
-	if (item.userId == userId && item.status == 'waiting') {
+        console.log(item.userId, userId, item.status);
+        console.log(item.userId == userId, item.status == 'waiting');
+        if (item.userId == userId && item.status == 'waiting') {
             duplicated = true;
         }
     });
 
-   if (duplicated === true )
+    if (duplicated === true)
         return -1;
 
-   waitingList.push({
+    waitingList.push({
         id: id++,
         userId,
         store,

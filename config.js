@@ -7,7 +7,7 @@ module.exports = {
     RT_GETSTORES_1: "대기 가능한 매장은 ",
     RT_GETSTORES_2: "등이 있습니다.",
     RT_NO_STORE: "어떤 매장을 말씀하시는건가요?",
-    RT_DUPLICATED: "이미 대기중이십니다.",
+    RT_DUPLICATED: "이미 대기하고 계십니다.",
     RT_START: "고대기 익스텐션을 시작합니다.",
     RT_GUIDE: "대기 가능한 매장 알려줘, 스타벅스 대기상태 알려줘, 스타벅스 대기표 뽑아줘, 라고 시도해보세요.",
     RT_END: "고대기를 종료합니다.",
