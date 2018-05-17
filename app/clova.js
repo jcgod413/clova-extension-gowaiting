@@ -45,7 +45,10 @@ const getWaiting = (store) => {
 
 const postWaiting = (store, userId) => {
     let responseText = "";
-    if (waiting.postWaiting(store, userId) === -1) {
+
+    let result = waiting.postWaiting(store, userId);
+    console.log(result);
+    if (result  === -1) {
         // found duplicated request
         return RT_DUPLICATED;
     }
@@ -106,9 +109,9 @@ class CEKRequest {
         const intent = this.request.intent.name;
         const slots = this.request.intent.slots;
         const sessionAttributes = this.session.sessionAttributes;
-        const userId = this.context.user.userId;
+        const userId = this.context.System.device.deviceId;
         let store;
-
+	console.log(userId);
         if (intent !== 'GetStoresIntent' && (!slots || !slots.Store)) {
             cekResponse.setMultiturn({
                 intent,
