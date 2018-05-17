@@ -2,7 +2,6 @@ const uuid = require('uuid').v4;
 const _ = require('lodash');
 const waiting = require('./waiting');
 const {
-    RT_NOSTORE,
     RT_GETWAITING_1,
     RT_GETWAITING_2,
     RT_POSTWAITING_1,
@@ -31,34 +30,24 @@ class Directive {
     }
 }
 
-const getWaiting = (slots) => {
+const getWaiting = (store) => {
     let responseText = "";
-    if (!slots || !slots.Store) {
-        responseText = RT_NO_STORE;
+    let waitingCount = waiting.getWaitingCount(store);
+    if (waitingCount == -1) {
+        responseText += RESPONSE_NO_STORE;
     } else {
-        let store = slots.Store.value;
-        let waitingCount = waiting.getWaitingCount(store);
-        if (waitingCount == -1) {
-            responseText += RESPONSE_NO_STORE;
-        } else {
-            responseText = RT_GETWAITING_1 + waitingCount + RT_GETWAITING_2;
-        }
+        responseText = RT_GETWAITING_1 + waitingCount + RT_GETWAITING_2;
     }
 
     return responseText;
 }
 
-const postWaiting = (slots) => {
+const postWaiting = (store) => {
     let responseText = "";
-    if (!slots || !slots.Store) {
-        responseText = RT_NO_STORE;
-    } else {
-        let store = slots.Store.value;
-        waiting.postWaiting(store);
+    waiting.postWaiting(store);
 
-        let waitingCount = waiting.getWaitingCount(store);
-        responseText = RT_POSTWAITING_1 + waitingCount + RT_POSTWAITING_2;
-    }
+    let waitingCount = waiting.getWaitingCount(store);
+    responseText = RT_POSTWAITING_1 + waitingCount + RT_POSTWAITING_2;
 
     return responseText;
 }
@@ -70,6 +59,17 @@ const getStores = () => {
     });
     responseText += RT_GETSTORES_2;
     return responseText;
+}
+
+const getParam = (sessionAttributes, slots) => {
+    const store = slots.Store.value;
+
+    switch(sessionAttributes.intent) {
+        case 'GetWaitingIntent':
+            return getWaiting(store);
+        case 'PostWaitingIntent':
+            return postWaiting(store);
+    }
 }
 
 class CEKRequest {
@@ -101,17 +101,31 @@ class CEKRequest {
         console.log('intentRequest');
         const intent = this.request.intent.name;
         const slots = this.request.intent.slots;
+        const sessionAttributes = this.session.sessionAttributes;
+        let store;
+        if (intent !== 'GetStoresIntent' && (!slots || !slots.Store)) {
+            cekResponse.setMultiturn({
+                intent,
+            });
+            cekResponse.setSimpleSpeechText(RT_NO_STORE);
+            return;
+        }
 
         let responseText;
         switch (intent) {
             case 'GetWaitingIntent':
-                responseText = getWaiting(slots);
+                store = slots.Store.value;
+                responseText = getWaiting(store);
                 break;
             case 'PostWaitingIntent':
-                responseText = postWaiting(slots);
+                store = slots.Store.value;
+                responseText = postWaiting(store);
                 break;
             case 'GetStoresIntent':
                 responseText = getStores();
+                break;
+            case 'ParamIntent':
+                responseText = getParam(sessionAttributes, slots);
                 break;
             case 'Clova.GuideIntent':
             default:
