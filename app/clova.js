@@ -33,9 +33,7 @@ class Directive {
 
 const getWaiting = (slots) => {
     let responseText = "";
-    if (!slots) {
-        responseText = RT_GUIDE;
-    } else if (!slots.Store) {
+    if (!slots || !slots.Store) {
         responseText = RT_NO_STORE;
     } else {
         let store = slots.Store.value;
@@ -52,9 +50,7 @@ const getWaiting = (slots) => {
 
 const postWaiting = (slots) => {
     let responseText = "";
-    if (!slots) {
-        responseText = RT_GUIDE;
-    } else if (!slots.Store) {
+    if (!slots || !slots.Store) {
         responseText = RT_NO_STORE;
     } else {
         let store = slots.Store.value;
