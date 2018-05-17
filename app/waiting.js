@@ -63,8 +63,9 @@ const remove = (req, res) => {
 
 const getWaitingCount = (store) => {
     let count = 0;
-    
+   console.log('getWaitingCount: ', store); 
     waitingList.forEach((item, index, array) => {
+	console.log(item);
         if( store === item.store && item.status === 'waiting' )    {
             count++;
         }
