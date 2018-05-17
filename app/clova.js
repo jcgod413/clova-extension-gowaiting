@@ -69,8 +69,11 @@ class CEKRequest {
         console.log('intentRequest');
         const intent = this.request.intent.name;
         const slots = this.request.intent.slots;
-        if (!slots) {
+        if (!slots || !slots.Store) {
             cekResponse.setSimpleSpeechText("지원하지 않는 매장입니다.");
+            return;
+        } else if (!slots.Action) {
+            cekResponse.setSimpleSpeechText("고대기에서 스타벅스에 대기시켜줘 라고 시도해보세요.");
             return;
         }
 
