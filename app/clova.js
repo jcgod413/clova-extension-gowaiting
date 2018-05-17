@@ -90,13 +90,7 @@ class CEKRequest {
         console.log('intentRequest');
         const intent = this.request.intent.name;
         const slots = this.request.intent.slots;
-        if (!slots || !slots.Store) {
-            cekResponse.setSimpleSpeechText(RT_NOSTORE);
-            cekResponse.setMultiturn({
-                intent: 'ManageWaitingIntent',
-            });
-            return;
-        } else if (!slots.Action) {
+        if (!slots || (!slots.Store && !slots.Action)) {
             cekResponse.setSimpleSpeechText(RT_GUIDE);
             cekResponse.setMultiturn({
                 intent: 'ManageWaitingIntent',
@@ -115,14 +109,14 @@ class CEKRequest {
         }
 
         if (this.session.new == false) {
-            cekResponse.setMultiturn()
+            cekResponse.setMultiturn();
         }
     }
 
     sessionEndedRequest(cekResponse) {
-        console.log('sessionEndedRequest')
-        cekResponse.setSimpleSpeechText(RT_END)
-        cekResponse.clearMultiturn()
+        console.log('sessionEndedRequest');
+        cekResponse.setSimpleSpeechText(RT_END);
+        cekResponse.clearMultiturn();
     }
 }
 
