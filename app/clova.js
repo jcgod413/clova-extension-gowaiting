@@ -9,6 +9,7 @@ const {
     RT_POSTWAITING_2,
     RT_GETSTORES_1,
     RT_GETSTORES_2,
+    RT_NO_STORE,
     RT_GUIDE,
     RT_END,
     STORES,
@@ -31,8 +32,10 @@ class Directive {
 
 const getWaiting = (slots) => {
     let responseText = "";
-    if (!slots || !slots.Store) {
+    if (!slots) {
         responseText = RT_GUIDE;
+    } else if (!slots.Store) {
+        responseText = RT_NO_STORE;
     } else {
         let store = slots.Store.value;
         let waitingCount = waiting.getWaitingCount(store);
@@ -48,8 +51,10 @@ const getWaiting = (slots) => {
 
 const postWaiting = (slots) => {
     let responseText = "";
-    if (!slots || !slots.Store) {
+    if (!slots) {
         responseText = RT_GUIDE;
+    } else if (!slots.Store) {
+        responseText = RT_NO_STORE;
     } else {
         let store = slots.Store.value;
         waiting.postWaiting(store);
