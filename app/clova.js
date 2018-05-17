@@ -9,6 +9,7 @@ const {
     RT_GETSTORES_1,
     RT_GETSTORES_2,
     RT_NO_STORE,
+    RT_DUPLICATED,
     RT_START,
     RT_GUIDE,
     RT_END,
@@ -42,9 +43,12 @@ const getWaiting = (store) => {
     return responseText;
 }
 
-const postWaiting = (store) => {
+const postWaiting = (store, userId) => {
     let responseText = "";
-    waiting.postWaiting(store);
+    if (waiting.postWaiting(store, userId) === -1) {
+        // found duplicated request
+        return RT_DUPLICATED;
+    }
 
     let waitingCount = waiting.getWaitingCount(store);
     responseText = RT_POSTWAITING_1 + waitingCount + RT_POSTWAITING_2;
@@ -61,14 +65,14 @@ const getStores = () => {
     return responseText;
 }
 
-const getParam = (sessionAttributes, slots) => {
+const getParam = (sessionAttributes, slots, userId) => {
     const store = slots.Store.value;
 
-    switch(sessionAttributes.intent) {
+    switch (sessionAttributes.intent) {
         case 'GetWaitingIntent':
             return getWaiting(store);
         case 'PostWaitingIntent':
-            return postWaiting(store);
+            return postWaiting(store, userId);
     }
 }
 
@@ -92,7 +96,7 @@ class CEKRequest {
     }
 
     launchRequest(cekResponse) {
-        console.log('launchRequest')
+        console.log('launchRequest');
         cekResponse.setSimpleSpeechText(RT_START + RT_GUIDE);
         cekResponse.setMultiturn();
     }
@@ -102,7 +106,9 @@ class CEKRequest {
         const intent = this.request.intent.name;
         const slots = this.request.intent.slots;
         const sessionAttributes = this.session.sessionAttributes;
+        const userId = this.context.user.userId;
         let store;
+
         if (intent !== 'GetStoresIntent' && (!slots || !slots.Store)) {
             cekResponse.setMultiturn({
                 intent,
@@ -119,13 +125,13 @@ class CEKRequest {
                 break;
             case 'PostWaitingIntent':
                 store = slots.Store.value;
-                responseText = postWaiting(store);
+                responseText = postWaiting(store, userId);
                 break;
             case 'GetStoresIntent':
                 responseText = getStores();
                 break;
             case 'ParamIntent':
-                responseText = getParam(sessionAttributes, slots);
+                responseText = getParam(sessionAttributes, slots, userId);
                 break;
             case 'Clova.GuideIntent':
             default:
