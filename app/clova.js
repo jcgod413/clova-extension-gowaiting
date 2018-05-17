@@ -29,19 +29,21 @@ class Directive {
     }
 }
 
-const manageWaiting = (store, action) => {
-    let waitingCount = waiting.getWaitingCount(store);
+const manageWaiting = (slots) => {
+    let action = slots.Action.value;
     let responseText = "";
-
+    
     if (waitingCount == -1) {
         responseText += RESPONSE_NO_STORE;
     } else {
         switch (action) {
             case "GetWaiting":
+                waitingCount = waiting.getWaitingCount(slots.Store.value);
                 responseText = RT_GETWAITING_1 + waitingCount + RT_GETWAITING_2;
                 break;
             case "PostWaiting":
                 waiting.postWaiting(store);
+                waitingCount = waiting.getWaitingCount(slots.Store.value);
                 responseText = RT_POSTWAITING_1 + (waitingCount + 1) + RT_POSTWAITING_2;
                 break;
             case "GetStores":
@@ -100,7 +102,7 @@ class CEKRequest {
 
         switch (intent) {
             case 'ManageWaitingIntent':
-                let responseText = manageWaiting(slots.Store.value, slots.Action.value);
+                let responseText = manageWaiting(slots);
                 cekResponse.setSimpleSpeechText(responseText);
                 break;
             case 'Clova.GuideIntent':
