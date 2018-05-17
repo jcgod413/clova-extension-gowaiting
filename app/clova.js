@@ -7,8 +7,11 @@ const {
     RT_GETWAITING_2,
     RT_POSTWAITING_1,
     RT_POSTWAITING_2,
+    RT_GETSTORES_1,
+    RT_GETSTORES_2,
     RT_GUIDE,
     RT_END,
+    STORES,
 } = require('../config');
 
 class Directive {
@@ -41,6 +44,15 @@ const manageWaiting = (store, action) => {
                 waiting.postWaiting(store);
                 responseText = RT_POSTWAITING_1 + (waitingCount + 1) + RT_POSTWAITING_2;
                 break;
+            case "GetStores":
+                responseText = RT_GETSTORES_1;
+                STORES.forEach((item, index, array) => {
+                    responseText += item + " ";
+                });
+                responseText += RT_GETSTORES_2;
+                break;
+            default:
+                responseText = RT_GUIDE;
         }
     }
 
