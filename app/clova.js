@@ -10,6 +10,7 @@ const {
     RT_GETSTORES_1,
     RT_GETSTORES_2,
     RT_NO_STORE,
+    RT_START,
     RT_GUIDE,
     RT_END,
     STORES,
@@ -96,7 +97,7 @@ class CEKRequest {
 
     launchRequest(cekResponse) {
         console.log('launchRequest')
-        cekResponse.setSimpleSpeechText(RT_GUIDE);
+        cekResponse.setSimpleSpeechText(RT_START + RT_GUIDE);
         cekResponse.setMultiturn();
     }
 
