@@ -20,7 +20,7 @@ const get = (req, res) => {
 const getAll = (req, res) => {
     console.log('GET /waiting');
 
-    res.send(waitingList);
+    res.json(waitingList);
 };
 
 const add = (req, res) => {
@@ -118,9 +118,10 @@ const getOrder = (store, userId) => {
     var order = -1,
         count = 0;
     waitingList.forEach((item, index, array) => {
-        if (item.store === store) {
+	console.log(item);
+        if (item.store === store && item.status === 'waiting') {
             count++;
-            if (item.userId === userId && item.status == 'waiting') {
+            if (item.userId === userId ) {
                 order = count;
             }
         }
@@ -131,8 +132,11 @@ const getOrder = (store, userId) => {
 
 const cancelOrder = (store, userId) => {
     let result = -1;
+console.log('cancelOrder', store, userId);
+console.log(waitingList);
     waitingList.forEach((item, index, array) => {
-        if (item.store === store && item.userId === userId && item.status == 'waiting') {
+	console.log(item);
+        if (item.store == store && item.userId == userId && item.status == 'waiting') {
             item.status = 'canceled';
             result = 0;
         }
