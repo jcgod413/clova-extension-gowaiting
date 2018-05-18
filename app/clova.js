@@ -8,6 +8,10 @@ const {
     RT_POSTWAITING_2,
     RT_GETSTORES_1,
     RT_GETSTORES_2,
+    RT_GETORDER_1,
+    RT_GETORDER_2,
+    RT_GETORDER_3,
+    RT_NOWAITING,
     RT_NO_STORE,
     RT_DUPLICATED,
     RT_START,
@@ -68,7 +72,25 @@ const getStores = () => {
     return responseText;
 }
 
+const getOrder = (store, userId) => {
+    let order = waiting.getOrder;
+    let waitingCount = waiting.getWaitingCount(store);
+    let responseText;
+
+    if (order === -1) {
+        responseText = RT_NOWAITING;
+    } else {
+        responseText = RT_GETORDER_1 + order + RT_GETORDER_2 + waitingCount + RT_GETORDER_3;
+    }
+
+    return responseText;
+}
+
 const getParam = (sessionAttributes, slots, userId) => {
+    if (!sessionAttributes || !sessionAttributes.intent) {
+        return RT_GUIDE;
+    }
+
     const store = slots.Store.value;
 
     switch (sessionAttributes.intent) {
@@ -76,6 +98,8 @@ const getParam = (sessionAttributes, slots, userId) => {
             return getWaiting(store);
         case 'PostWaitingIntent':
             return postWaiting(store, userId);
+        case 'GetOrderIntent':
+            return getOrder(store, userId);
     }
 }
 
@@ -132,6 +156,9 @@ class CEKRequest {
                 break;
             case 'GetStoresIntent':
                 responseText = getStores();
+                break;
+            case 'GetOrderIntent':
+                // GetOrderIntent always activate by ParamIntent
                 break;
             case 'ParamIntent':
                 responseText = getParam(sessionAttributes, slots, userId);
