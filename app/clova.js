@@ -51,7 +51,6 @@ const postWaiting = (store, userId) => {
     let responseText = "";
 
     let result = waiting.postWaiting(store, userId);
-    console.log(result);
     if (result === -1) {
         // found duplicated request
         return RT_DUPLICATED;
@@ -73,13 +72,15 @@ const getStores = () => {
 }
 
 const getOrder = (store, userId) => {
-    let order = waiting.getOrder;
+    let order = waiting.getOrder(store, userId);
     let waitingCount = waiting.getWaitingCount(store);
     let responseText;
 
     if (order === -1) {
         responseText = RT_NOWAITING;
-    } else {
+    } else if (order === -2)  {
+        responseText = "지원하지 않는 매장입니�;
+    }  else {
         responseText = RT_GETORDER_1 + order + RT_GETORDER_2 + waitingCount + RT_GETORDER_3;
     }
 
@@ -92,7 +93,6 @@ const getParam = (sessionAttributes, slots, userId) => {
     }
 
     const store = slots.Store.value;
-    console.log('getParam', store, userId);
 
     switch (sessionAttributes.intent) {
         case 'GetWaitingIntent':
@@ -136,11 +136,16 @@ class CEKRequest {
         const sessionAttributes = this.session.sessionAttributes;
         const userId = this.context.System.device.deviceId;
         let store;
-        console.log(userId);
-        if (intent !== 'GetStoresIntent' && (!slots || !slots.Store)) {
-            cekResponse.setMultiturn({
-                intent,
-            });
+        
+	if (intent !== 'GetStoresIntent' && (!slots || !slots.Store)) {
+            if (intent !== 'Clova.GuideIntent' && intent !== 'Clove.NoIntent') {
+	    	cekResponse.setMultiturn({
+               		intent,
+            	});
+	    } else {
+		cekResponse.setMultiturn(sessionAttributes);
+  	    }
+     
             cekResponse.setSimpleSpeechText(RT_NO_STORE);
             return;
         }

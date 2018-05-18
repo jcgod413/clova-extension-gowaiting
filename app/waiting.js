@@ -97,7 +97,7 @@ const postWaiting = (store, userId) => {
     var duplicated = false;
 
     waitingList.forEach((item, index, array) => {
-        if (item.userId == userId && item.status == 'waiting') {
+        if (item.userId == userId && item.store == store && item.status == 'waiting') {
             duplicated = true;
         }
     });
@@ -115,16 +115,18 @@ const postWaiting = (store, userId) => {
 };
 
 const getOrder = (store, userId) => {
-    let order = -1, count = 0;
+    var order = -1, count = 0;
     waitingList.forEach((item, index, array) => {
         if (item.store === store) {
             count++;
-            if (item.userId == userId && item.status == 'waiting') {
+            if (item.userId === userId && item.status == 'waiting') {
                 order = count;
             }
         }
     });
 
+    if (count == 0)
+        order = -2;
     return order;
 };
 
