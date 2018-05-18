@@ -4,11 +4,11 @@
 고대기는 주변 상점의 대기 시스템의 대기 정보를 조회할 수 있고 대기 신청할 수 있는 Extension입니다. 현재 테스트 배포 되있는 상태입니다. 
 
 ## 실시간 대기표 정보 확인
-http://hack.sullivan.kr/waiting 
+#### http://hack.sullivan.kr/waiting 
 
 ## 실행방법
-고대기 Extension server는 Node.js로 구현되었습니다. LTS 버전인 Node.js 8.x.x를 먼저 설치해주시길 바랍니다.
-https://nodejs.org/ko/download/
+고대기 Extension server는 Node.js로 구현되었습니다. 현재 LTS 버전인 Node.js 8.x.x를 먼저 설치해주시길 바랍니다.
+#### https://nodejs.org/ko/download/
 
 ### 1. Clone this project
 ```bash
@@ -33,7 +33,7 @@ export SERVER_PORT=8080
 
 ### 4. Send request to Server
 
-#### - GOWAITING URL http://hack.sullivan.kr/clova
+#### - GOWAITING URL : http://hack.sullivan.kr/clova
 
 #### - TEST_URL : http://localhost:80/clova 
 
