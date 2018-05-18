@@ -87,6 +87,7 @@ const getWaitingCount = (store) => {
             count++;
         }
     });
+
     return count;
 };
 
@@ -96,8 +97,6 @@ const postWaiting = (store, userId) => {
     var duplicated = false;
 
     waitingList.forEach((item, index, array) => {
-        console.log(item.userId, userId, item.status);
-        console.log(item.userId == userId, item.status == 'waiting');
         if (item.userId == userId && item.status == 'waiting') {
             duplicated = true;
         }
@@ -113,7 +112,18 @@ const postWaiting = (store, userId) => {
         status: 'waiting',
         time
     });
-}
+};
+
+const getOrder = (store, userId) => {
+    let order;
+    waitingList.forEach((item, index, array) => {
+        if (item.userId == userId && item.store == store) {
+            order = index + 1;
+        }
+    });
+
+    return order;
+};
 
 module.exports = {
     get,
@@ -123,4 +133,5 @@ module.exports = {
     remove,
     getWaitingCount,
     postWaiting,
+    getOrder,
 };
