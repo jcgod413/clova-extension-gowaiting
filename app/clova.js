@@ -13,9 +13,11 @@ const {
     RT_GETORDER_3,
     RT_NOWAITING,
     RT_NO_STORE,
+    RT_CANCELED,
     RT_DUPLICATED,
     RT_START,
     RT_GUIDE,
+    RT_RETRY,
     RT_END,
     STORES,
 } = require('../config');
@@ -78,10 +80,21 @@ const getOrder = (store, userId) => {
 
     if (order === -1) {
         responseText = RT_NOWAITING;
-    } else if (order === -2)  {
-        responseText = "지원하지 않는 매장입니�;
-    }  else {
+    } else {
         responseText = RT_GETORDER_1 + order + RT_GETORDER_2 + waitingCount + RT_GETORDER_3;
+    }
+
+    return responseText;
+}
+
+const cancelOrder = (store, userId) => {
+    let responseText;
+    let result = waiting.cancelOrder(store, userId);
+
+    if (result === -1) {
+        responseText = RT_NOWAITING;
+    } else {
+        responseText = RT_CANCELED;
     }
 
     return responseText;
@@ -101,6 +114,10 @@ const getParam = (sessionAttributes, slots, userId) => {
             return postWaiting(store, userId);
         case 'GetOrderIntent':
             return getOrder(store, userId);
+        case 'RetractionIntent':
+            return cancelOrder(store, userId);
+        default: 
+            return RT_RETRY;
     }
 }
 
@@ -136,16 +153,16 @@ class CEKRequest {
         const sessionAttributes = this.session.sessionAttributes;
         const userId = this.context.System.device.deviceId;
         let store;
-        
-	if (intent !== 'GetStoresIntent' && (!slots || !slots.Store)) {
+
+        if (intent !== 'GetStoresIntent' && (!slots || !slots.Store)) {
             if (intent !== 'Clova.GuideIntent' && intent !== 'Clove.NoIntent') {
-	    	cekResponse.setMultiturn({
-               		intent,
-            	});
-	    } else {
-		cekResponse.setMultiturn(sessionAttributes);
-  	    }
-     
+                cekResponse.setMultiturn({
+                    intent,
+                });
+            } else {
+                cekResponse.setMultiturn(sessionAttributes);
+            }
+
             cekResponse.setSimpleSpeechText(RT_NO_STORE);
             return;
         }
@@ -165,6 +182,9 @@ class CEKRequest {
                 break;
             case 'GetOrderIntent':
                 // GetOrderIntent always activate by ParamIntent
+                break;
+            case 'RetractionIntent':
+                // RetractionIntent always activate by ParamIntent
                 break;
             case 'ParamIntent':
                 responseText = getParam(sessionAttributes, slots, userId);

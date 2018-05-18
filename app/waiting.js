@@ -115,7 +115,8 @@ const postWaiting = (store, userId) => {
 };
 
 const getOrder = (store, userId) => {
-    var order = -1, count = 0;
+    var order = -1,
+        count = 0;
     waitingList.forEach((item, index, array) => {
         if (item.store === store) {
             count++;
@@ -125,9 +126,18 @@ const getOrder = (store, userId) => {
         }
     });
 
-    if (count == 0)
-        order = -2;
     return order;
+};
+
+const cancelOrder = (store, userId) => {
+    let result = -1;
+    waitingList.forEach((item, index, array) => {
+        if (item.store === store && item.userId === userId && item.status == 'waiting') {
+            item.status == 'canceled'
+            result = 0;
+        }
+    });
+    return result;
 };
 
 module.exports = {
