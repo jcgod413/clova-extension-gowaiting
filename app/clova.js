@@ -77,7 +77,7 @@ const getOrder = (store, userId) => {
     let order = waiting.getOrder(store, userId);
     let waitingCount = waiting.getWaitingCount(store);
     let responseText;
-	console.log('getOrder');
+
     if (order === -1) {
         responseText = RT_NOWAITING;
     } else {
@@ -90,7 +90,7 @@ const getOrder = (store, userId) => {
 const cancelOrder = (store, userId) => {
     let responseText;
     let result = waiting.cancelOrder(store, userId);
-	console.log('cancelOrder', store, userId, result);
+
     if (result === -1) {
         responseText = RT_NOWAITING;
     } else {
@@ -116,7 +116,7 @@ const getParam = (sessionAttributes, slots, userId) => {
             return getOrder(store, userId);
         case 'RetractionIntent':
             return cancelOrder(store, userId);
-        default: 
+        default:
             return RT_RETRY;
     }
 }
@@ -126,6 +126,7 @@ class CEKRequest {
         this.request = httpReq.body.request;
         this.context = httpReq.body.context;
         this.session = httpReq.body.session;
+
         console.log(`CEK Request: ${JSON.stringify(this.context)}, ${JSON.stringify(this.session)}`)
     }
 
@@ -142,19 +143,20 @@ class CEKRequest {
 
     launchRequest(cekResponse) {
         console.log('launchRequest');
+
         cekResponse.setSimpleSpeechText(RT_START + RT_GUIDE);
         cekResponse.setMultiturn();
     }
 
     intentRequest(cekResponse) {
         console.log('intentRequest');
+
         const intent = this.request.intent.name;
         const slots = this.request.intent.slots;
         const sessionAttributes = this.session.sessionAttributes;
         const userId = this.context.System.device.deviceId;
         let store;
 
-	console.log(intent, slots);
         if (intent !== 'GetStoresIntent' && (!slots || !slots.Store)) {
             if (intent !== 'Clova.GuideIntent' && intent !== 'Clove.NoIntent') {
                 cekResponse.setMultiturn({
@@ -167,8 +169,8 @@ class CEKRequest {
             cekResponse.setSimpleSpeechText(RT_NO_STORE);
             return;
         }
-       
-	 let responseText;
+
+        let responseText;
         switch (intent) {
             case 'GetWaitingIntent':
                 store = slots.Store.value;
@@ -182,11 +184,11 @@ class CEKRequest {
                 responseText = getStores();
                 break;
             case 'GetOrderIntent':
-                // GetOrderIntent always activate by ParamIntent
+                // GetOrderIntent always executed by ParamIntent
                 break;
             case 'RetractionIntent':
-		store = slots.Store.value;
-		responseText = cancelOrder(store, userId);
+                store = slots.Store.value;
+                responseText = cancelOrder(store, userId);
                 break;
             case 'ParamIntent':
                 responseText = getParam(sessionAttributes, slots, userId);

@@ -9,6 +9,7 @@ const get = (req, res) => {
     const {
         id
     } = req.params;
+
     waitingList.forEach((item, index, array) => {
         if (id == item.id) {
             res.send(waitingList[index]);
@@ -41,7 +42,7 @@ const add = (req, res) => {
         time
     });
 
-    res.send(waitingList);
+    res.json(waitingList);
 };
 
 const modify = (req, res) => {
@@ -52,7 +53,6 @@ const modify = (req, res) => {
         status
     } = req.query;
 
-    console.log(id, status);
     waitingList.forEach((item, index, array) => {
         if (id == item.id) {
             waitingList.splice(index, 1, {
@@ -62,7 +62,7 @@ const modify = (req, res) => {
         }
     });
 
-    res.send(waitingList);
+    res.json(waitingList);
 };
 
 const remove = (req, res) => {
@@ -77,7 +77,7 @@ const remove = (req, res) => {
         }
     });
 
-    res.send(waitingList);
+    res.json(waitingList);
 };
 
 const getWaitingCount = (store) => {
@@ -101,9 +101,9 @@ const postWaiting = (store, userId) => {
             duplicated = true;
         }
     });
-
-    if (duplicated === true)
+    if (duplicated === true) {
         return -1;
+    }
 
     waitingList.push({
         id: id++,
@@ -117,11 +117,12 @@ const postWaiting = (store, userId) => {
 const getOrder = (store, userId) => {
     var order = -1,
         count = 0;
+
     waitingList.forEach((item, index, array) => {
-	console.log(item);
+        console.log(item);
         if (item.store === store && item.status === 'waiting') {
             count++;
-            if (item.userId === userId ) {
+            if (item.userId === userId) {
                 order = count;
             }
         }
@@ -132,15 +133,14 @@ const getOrder = (store, userId) => {
 
 const cancelOrder = (store, userId) => {
     let result = -1;
-console.log('cancelOrder', store, userId);
-console.log(waitingList);
+
     waitingList.forEach((item, index, array) => {
-	console.log(item);
         if (item.store == store && item.userId == userId && item.status == 'waiting') {
             item.status = 'canceled';
             result = 0;
         }
     });
+
     return result;
 };
 
