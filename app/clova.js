@@ -92,6 +92,7 @@ const getParam = (sessionAttributes, slots, userId) => {
     }
 
     const store = slots.Store.value;
+    console.log('getParam', store, userId);
 
     switch (sessionAttributes.intent) {
         case 'GetWaitingIntent':

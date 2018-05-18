@@ -115,10 +115,13 @@ const postWaiting = (store, userId) => {
 };
 
 const getOrder = (store, userId) => {
-    let order = -1;
+    let order = -1, count = 0;
     waitingList.forEach((item, index, array) => {
-        if (item.userId == userId && item.store == store) {
-            order = index + 1;
+        if (item.store === store) {
+            count++;
+            if (item.userId == userId && item.status == 'waiting') {
+                order = count;
+            }
         }
     });
 
