@@ -184,7 +184,7 @@ class CEKRequest {
                 // GetOrderIntent always activate by ParamIntent
                 break;
             case 'RetractionIntent':
-                // RetractionIntent always activate by ParamIntent
+		responseText = cancelOrder(store, userId);
                 break;
             case 'ParamIntent':
                 responseText = getParam(sessionAttributes, slots, userId);

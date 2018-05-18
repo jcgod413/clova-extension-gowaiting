@@ -133,7 +133,7 @@ const cancelOrder = (store, userId) => {
     let result = -1;
     waitingList.forEach((item, index, array) => {
         if (item.store === store && item.userId === userId && item.status == 'waiting') {
-            item.status == 'canceled'
+            item.status = 'canceled';
             result = 0;
         }
     });
@@ -149,4 +149,5 @@ module.exports = {
     getWaitingCount,
     postWaiting,
     getOrder,
+    cancelOrder,
 };
